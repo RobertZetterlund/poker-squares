@@ -1,12 +1,26 @@
 "use server";
 import { kv } from "@vercel/kv";
-export async function submitScore(date: string, score: number) {
-  const path = `$["${date}"]['${score}']`;
-  kv.json.numincrby("games", path, 1);
+export async function submitScore({
+  score,
+  date,
+}: {
+  date?: string;
+  score: number;
+}) {
+  if (date) {
+    const path = `$["${date}"]['${score}']`;
+    kv.json.numincrby("games", path, 1);
+  }
+  kv.incr("total_games_played");
+  kv.json.numincrby("all_games", `$["${score}"]`, 1);
 }
 
 export async function getScore(date: string): Promise<Record<string, number>> {
   return (await kv.json.get(`games`, {}, `$["${date}"]`)).at(0);
+}
+
+export async function getAllScores(): Promise<Record<string, number>> {
+  return await kv.json.get(`all_games`, {});
 }
 
 const scoreObj = (() => {
@@ -21,6 +35,8 @@ export const resetJSON = () => {
   for (let dateStr of arr) {
     kv.json.set("games", `$["${dateStr}"]`, scoreObj);
   }
+  kv.json.set("all_games", "$", scoreObj);
+  kv.set("total_games_played", 0);
 };
 
 const arr = [

@@ -1,0 +1,6 @@
+This website was built by Robert Zetterlund.
+All artwork and the font is property of LocalThunk, creator of Balatro. 
+Sourced at https://fontstruct.com/fontstructions/show/2326420/balatro and https://www.spriters-resource.com/pc_computer/balatro/.
+
+The text describing the rules of the game is from wikipedia: https://en.wikipedia.org/wiki/Poker_squares
+

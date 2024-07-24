@@ -4,8 +4,11 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 11, 43, 131;
+  --background-end-rgb: 14, 52, 160;
+
+  --button-bg: hsl(0, 99%, 39%);
+  --button-text: white;
 }
 
 body {
@@ -18,6 +21,184 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+header {
+  width: 100%;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+main {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 0 16px;
+  @media (max-width: 768px) {
+    padding: 0 2px;
+  }
+}
+
+/** fix hovering issue of tooltips */
 svg > g > g.google-visualization-tooltip {
   pointer-events: none;
+}
+
+@layer components {
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #212121;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  :root {
+    --var-scale: 2;
+    --var-card-height: 97px;
+    --var-card-width: 72px;
+    @media (max-width: 768px) {
+      --var-scale: 1;
+    }
+    --var-card-offset: calc(30px * var(--var-scale));
+  }
+
+  .stack-container {
+    display: flex;
+    justify-content: space-between;
+    @media (max-width: 768px) {
+      justify-content: space-evenly;
+    }
+    width: 100%;
+    /* the height is the height of a card + the offset * 4 */
+    height: calc(
+      var(--var-card-height) * var(--var-scale) + var(--var-card-offset) * 4
+    );
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    height: 100%;
+    width: calc(var(--var-card-width) * var(--var-scale));
+  }
+
+  .card {
+    box-sizing: border-box;
+    height: var(--var-card-height);
+    width: var(--var-card-width);
+    box-shadow: 0 6px 6px -2px rgba(0, 0, 0, 0.25);
+    border: 1px solid black;
+    border-radius: 4px;
+    background-color: white;
+    transform-origin: top left;
+    transform: scale(var(--var-scale));
+  }
+  .card-wrapper.inlined {
+    --var-scale: 0.5;
+  }
+
+  .card-wrapper {
+    grid-column: -1/1;
+    grid-row: -1/1;
+    width: calc(var(--var-card-width) * var(--var-scale));
+    height: calc(var(--var-card-height) * var(--var-scale));
+  }
+  .stack .card-wrapper {
+    cursor: pointer;
+  }
+
+  .stack .card-wrapper:nth-child(1) {
+    transform: translateY(calc(0 * var(--var-card-offset)));
+  }
+  .stack .card-wrapper:nth-child(2) {
+    transform: translateY(calc(1 * var(--var-card-offset)));
+  }
+  .stack .card-wrapper:nth-child(3) {
+    transform: translateY(calc(2 * var(--var-card-offset)));
+  }
+  .stack .card-wrapper:nth-child(4) {
+    transform: translateY(calc(3 * var(--var-card-offset)));
+  }
+  .stack .card-wrapper:nth-child(5) {
+    transform: translateY(calc(4 * var(--var-card-offset)));
+  }
+
+  /** button */
+
+  .button-span {
+    transition-duration: 0.3s;
+    cursor: pointer;
+
+    font-size: 18px;
+    color: var(--button-text);
+
+    transform: translateY(-4px);
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: var(--button-bg);
+    @media (max-width: 768px) {
+      font-size: 12px;
+      padding: 4px;
+    }
+  }
+  .button-span:hover {
+    transform: translateY(-5px);
+  }
+  .button-span.press {
+    transition-duration: 0.1s;
+    transform: translateY(0px);
+    box-shadow: inset 0px 3px 3px 0px rgba(0, 0, 0, 0.5);
+  }
+
+  .stamp-button {
+    margin-top: 8px;
+    border: none;
+    display: flex;
+    border-radius: 4px;
+    padding: 0;
+    position: relative;
+
+    background: linear-gradient(
+      90deg,
+      hsl(0, 60%, 35%) 0%,
+      hsl(0, 99%, 50%) 14.06%,
+      hsl(0, 99%, 50%) 83.85%,
+      hsl(0, 60%, 35%) 100%
+    );
+  }
+  .stamp-button:disabled span {
+    transform: translateY(-1px);
+    opacity: 0.5;
+  }
+}
+
+.react-responsive-modal-modal.react-responsive-modal-modal.react-responsive-modal-modal {
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  width: 90vw;
+
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }

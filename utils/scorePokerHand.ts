@@ -5,7 +5,7 @@ export type Card = {
   Value: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 };
 
-export function getDeck() {
+export function getDeck(dateStr: string) {
   let deck = new Array<Card>();
 
   for (let i = 0; i < suits.length; i++) {
@@ -15,23 +15,34 @@ export function getDeck() {
     }
   }
 
-  return shuffle(deck, 1);
+  return shuffle(deck, Number(dateStr.replaceAll("_", "")));
 }
 
-const hands = [
-  "4 of a Kind",
-  "Straight Flush",
-  "Straight",
-  "Flush",
-  "High Card",
-  "1 Pair",
-  "2 Pair",
-  "Royal Flush",
-  "3 of a Kind",
-  "Full House",
-];
+enum ScoringHand {
+  FOUR_OF_A_KIND = 4,
+  STRAIGHT_FLUSH = 8,
+  STRAIGHT = 4,
+  FLUSH = 5,
+  HIGH_CARD = 0,
+  ONE_PAIR = 1,
+  TWO_PAIR = 2,
+  ROYAL_FLUSH = 9,
+  THREE_OF_A_KIND = 3,
+  FULL_HOUSE = 6,
+}
 
-const handScore = [4, 8, 4, 5, 0, 1, 2, 8, 3, 6];
+const handScore = [
+  ScoringHand.FOUR_OF_A_KIND,
+  ScoringHand.STRAIGHT_FLUSH,
+  ScoringHand.STRAIGHT,
+  ScoringHand.FLUSH,
+  ScoringHand.HIGH_CARD,
+  ScoringHand.ONE_PAIR,
+  ScoringHand.TWO_PAIR,
+  ScoringHand.ROYAL_FLUSH,
+  ScoringHand.THREE_OF_A_KIND,
+  ScoringHand.FULL_HOUSE,
+];
 
 const SuitToNumber = { S: 1, C: 2, H: 4, D: 8 } as const;
 
@@ -61,7 +72,6 @@ export function rankPokerHand(hand: Hand) {
 }
 
 export function shuffle(deck: Card[], seed: number) {
-  // <-- ADDED ARGUMENT
   var m = deck.length,
     t,
     i;
@@ -69,13 +79,13 @@ export function shuffle(deck: Card[], seed: number) {
   // While there remain elements to shuffle…
   while (m) {
     // Pick a remaining element…
-    i = Math.floor(random(seed) * m--); // <-- MODIFIED LINE
+    i = Math.floor(random(seed) * m--);
 
     // And swap it with the current element.
     t = deck[m];
     deck[m] = deck[i];
     deck[i] = t;
-    ++seed; // <-- ADDED LINE
+    ++seed;
   }
 
   return deck;

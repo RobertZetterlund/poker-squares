@@ -1,56 +1,19 @@
----
-name: Vercel KV for Redis Next.js Starter
-slug: kv-redis-starter
-description: Simple Next.js template that uses Vercel KV for Redis to track pageviews.
-framework: Next.js
-useCase: Starter
-css: Tailwind
-database: Vercel KV
-deployUrl: https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fstorage%2Fkv-redis-starter&project-name=kv-redis-starter&repository-name=kv-redis-starter&demo-title=Vercel%20KV%20for%20Redis%20Next.js%20Starter&demo-description=Simple%20Next.js%20template%20that%20uses%20Vercel%20KV%20for%20Redis%20to%20track%20pageviews.&demo-url=https%3A%2F%2Fkv-redis-starter.vercel.app%2F&demo-image=https%3A%2F%2Fkv-redis-starter.vercel.app%2Fopengraph-image.png&stores=%5B%7B"type"%3A"kv"%7D%5D
-demoUrl: https://kv-redis-starter.vercel.app/
-relatedTemplates:
-  - blob-starter
-  - postgres-starter
----
+# Poker Squares
 
-# Vercel KV for Redis Next.js Starter
+<img src='./public/opengraph-image.png'>
 
-Simple Next.js template that uses [Vercel KV for Redis](https://vercel.com/kv) to track pageviews.
+I played Poker Squares when I grew up and was reminded of it when visiting my parents this summer. Turns out all of the websites I could find to play it online was full of ads. So this repository hosts a simple poker squares playing game, with the added functionality to play the "daily deck" to compare with others, and free-play mode to play a randomly shuffled deck. Using [Vercel KV](https://vercel.com/docs/storage/vercel-kv) I was able to use Redis to persist scores, so I persist global games, as well as the daily deck game, viewable on the leaderboard.
 
-## Demo
+<img src='./public/leaderboard.png'>
 
-https://kv-redis-starter.vercel.app/
+### Credits
 
-## How to Use
+All the artwork comes from the very popular game [Balatro](https://www.playbalatro.com/), sourced from [spriters-resource](https://www.spriters-resource.com/pc_computer/balatro/). The font used is from [FontStruct](https://fontstruct.com/fontstructions/show/2326420/balatro). The rules are adapted from the swedish page for [pokerpatiens](https://sv.wikipedia.org/wiki/Pokerpatiens).
 
-You can choose from one of the following two methods to use this repository:
+### Trivia
 
-### One-Click Deploy
+The app uses a bitwise way to score poker hands that I found online which was very fascinating, worth a read, see [A Poker hand analyzer in JavaScript using bit & mathematical operations](https://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math).
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+The sprites used are in a spritemap, which means you only load one image and re-use it by cropping it!
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fstorage%2Fkv-redis-starter&project-name=kv-redis-starter&repository-name=kv-redis-starter&demo-title=Vercel%20KV%20for%20Redis%20Next.js%20Starter&demo-description=Simple%20Next.js%20template%20that%20uses%20Vercel%20KV%20for%20Redis%20to%20track%20pageviews.&demo-url=https%3A%2F%2Fkv-redis-starter.vercel.app%2F&demo-image=https%3A%2F%2Fkv-redis-starter.vercel.app%2Fopengraph-image.png&stores=%5B%7B"type"%3A"kv"%7D%5D)
-
-### Clone and Deploy
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [pnpm](https://pnpm.io/installation) to bootstrap the example:
-
-```bash
-pnpm create next-app --example https://github.com/vercel/examples/tree/main/storage/kv-redis-starter
-```
-
-Once that's done, copy the .env.example file in this directory to .env.local (which will be ignored by Git):
-
-```bash
-cp .env.example .env.local
-```
-
-Then open `.env.local` and set the environment variables to match the ones in your Vercel Storage Dashboard.
-
-Next, run Next.js in development mode:
-
-```bash
-pnpm dev
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples) ([Documentation](https://nextjs.org/docs/deployment)).
+<img src='./public/cards_sprite.png'>
