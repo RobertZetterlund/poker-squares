@@ -37,7 +37,7 @@ export function BarChart({ data }: { data: Record<number, number> }) {
           vAxis: { title: "Frequency", minValue: 0, format: "0" },
           hAxis: { title: "Score", minValue: 0 },
           chartArea: {
-            width: "85%",
+            width: "80%",
             height: "70%",
           },
         }}

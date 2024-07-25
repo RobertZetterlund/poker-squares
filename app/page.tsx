@@ -111,6 +111,12 @@ const keyifyCard = (c: Card): string => {
 const queryClient = new QueryClient({});
 
 export default function Page() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js");
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={true} />
