@@ -2,7 +2,7 @@
   "name": "Poker Squares",
   "short_name": "Poker Squares",
   "description": "Play Poker Squares online and compare your daily score to others",
-  "start_url": "/",
+  "start_url": "https://poker-squares.vercel.app/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
