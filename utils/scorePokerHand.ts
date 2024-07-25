@@ -19,7 +19,7 @@ export function getDeck(dateStr: string) {
 }
 
 enum ScoringHand {
-  FOUR_OF_A_KIND = 4,
+  FOUR_OF_A_KIND = 7,
   STRAIGHT_FLUSH = 8,
   STRAIGHT = 4,
   FLUSH = 5,
