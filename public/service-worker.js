@@ -1,18 +1,4 @@
-const installEvent = () => {
-  self.addEventListener("install", () => {
-    console.log("service worker installed");
-  });
-};
-installEvent();
-
-const activateEvent = () => {
-  self.addEventListener("activate", () => {
-    console.log("service worker activated");
-  });
-};
-activateEvent();
-
-const cacheName = "v2";
+const cacheName = "v1";
 
 const cacheClone = async (e) => {
   const res = await fetch(e.request);
@@ -25,6 +11,9 @@ const cacheClone = async (e) => {
 
 const fetchEvent = () => {
   self.addEventListener("fetch", (e) => {
+    if (e.request.url === "https://poker-squares.vercel.app/") {
+      return;
+    }
     e.respondWith(
       cacheClone(e)
         .catch(() => caches.match(e.request))
