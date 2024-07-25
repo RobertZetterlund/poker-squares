@@ -17,7 +17,7 @@ export function BarChart({ data }: { data: Record<number, number> }) {
     });
 
     const numbers = cutOffNumbers.map(([score, freq]) => [
-      String(score),
+      Number(score),
       Number(freq),
       `${freq} users got ${score} point(s)`,
     ]);
