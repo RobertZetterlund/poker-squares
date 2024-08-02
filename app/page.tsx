@@ -11,6 +11,14 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import {
+  DndContext,
+  DragEndEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PlayingCard } from "@/components/Card";
 import { StampButton } from "@/components/StampButton";
@@ -18,6 +26,8 @@ import { Scores } from "@/components/Scores";
 import { Rules } from "@/components/Rules";
 import Link from "next/link";
 import Image from "next/image";
+import { Droppable } from "./DroppableStack";
+import { Draggable } from "./Draggable";
 
 const dateStr = new Date().toISOString().split("T")[0].replaceAll("-", "_");
 
@@ -120,6 +130,7 @@ export default function Page() {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={true} />
+
       <Home />
     </QueryClientProvider>
   );
@@ -213,6 +224,13 @@ function Home() {
   // focused at a top element (having it in view).
   const focusRefHack = useRef(null);
 
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const onHandleDragEnd = useCallback((e: DragEndEvent) => {
+    if (e.over?.id) {
+      dispatch({ type: "SELECT_STACK", payload: Number(e.over.id) });
+    }
+  }, []);
+
   return (
     <>
       <div className="min-h-screen flex flex-col gap-8">
@@ -226,7 +244,12 @@ function Home() {
               Poker Squares
             </button>
 
-            <button onClick={onOpenRulesModal}>?</button>
+            <button
+              className="border border-gray-300 p-1 shadow-lg"
+              onClick={onOpenRulesModal}
+            >
+              Rules
+            </button>
           </div>
         </header>
         <main className="flex justify-center flex-col items-center">
@@ -256,34 +279,48 @@ function Home() {
               />
             </div>
           </div>
-          <div className="stack-container">
-            {state.hands?.map((stack, idx) => {
-              return (
-                <div className="stack" key={idx}>
-                  {stack.map((c) => {
-                    const key = keyifyCard(c);
-                    return (
-                      <PlayingCard
-                        key={key}
-                        card={c}
-                        onClick={() => {
-                          dispatch({ type: "SELECT_STACK", payload: idx });
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+          <DndContext
+            sensors={sensors}
+            onDragEnd={onHandleDragEnd}
+            autoScroll={{
+              layoutShiftCompensation: false,
+              threshold: { x: 0, y: 0.2 },
+              enabled: false,
+            }}
+          >
+            <div className="stack-container">
+              {state.hands?.map((stack, idx) => {
+                return (
+                  <Droppable id={idx + ""} key={idx}>
+                    <div className="stack">
+                      {stack.map((c) => {
+                        const key = keyifyCard(c);
+                        return (
+                          <PlayingCard
+                            key={key}
+                            card={c}
+                            onClick={() => {
+                              dispatch({ type: "SELECT_STACK", payload: idx });
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </Droppable>
+                );
+              })}
+            </div>
 
-          <div className="mt-8 flex gap-2">
-            <PlayingCard card={state.activeCard} />
-          </div>
+            <div className="mt-8 flex gap-2 border-dashed border border-yellow-300 p-1">
+              <Draggable id="playing-card" disabled={state.score !== null}>
+                <PlayingCard card={state.activeCard} />
+              </Draggable>
+            </div>
+          </DndContext>
 
           {state.score !== null && (
-            <div className="text-white mt-4 flex flex-col">
-              <p>You got {state.score} point(s)</p>
+            <div className="text-white mt-4 flex flex-col text-center">
+              <p className="mb-1">You got {state.score} points</p>
               <StampButton
                 text="View Leaderboard"
                 disabled={state.score == null}
