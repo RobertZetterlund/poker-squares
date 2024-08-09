@@ -1,7 +1,7 @@
 "use client";
 import { Card, getDeck, Hand, rankPokerHand } from "@/utils/scorePokerHand";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { produce } from "immer";
+import { current, produce } from "immer";
 import { submitScore } from "@/app/actions";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
@@ -28,6 +28,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Droppable } from "./DroppableStack";
 import { Draggable } from "./Draggable";
+import { Settings } from "@/components/Settings";
+import { useSettingsContext } from "@/context/SettingsContext";
 
 const dateStr = new Date().toISOString().split("T")[0].replaceAll("-", "_");
 
@@ -38,6 +40,7 @@ type GameState = {
   score: number | null;
   round: number;
   isFreePlay: boolean;
+  autoPlay: boolean;
 };
 
 type Action =
@@ -50,6 +53,10 @@ type Action =
     }
   | {
       type: "FREE_PLAY";
+    }
+  | {
+      type: "SET_AUTOPLAY";
+      payload: boolean;
     };
 
 function reducer(state: GameState, action: Action): GameState {
@@ -67,6 +74,7 @@ function reducer(state: GameState, action: Action): GameState {
           String(Math.floor(Math.random() * 10000000000000))
         );
         draftState.isFreePlay = true;
+        draftState.autoPlay = state.autoPlay;
         return draftState;
       }
       case "SELECT_STACK": {
@@ -88,9 +96,36 @@ function reducer(state: GameState, action: Action): GameState {
           draftState.score = draftState.hands.reduce((sum, hand) => {
             return sum + rankPokerHand(hand);
           }, 0);
-
-          return draftState;
         }
+        if (state.autoPlay) {
+          // if there is only one available pile left, place the card there
+          if (
+            draftState.hands.filter((pile) => pile.length === draftState.round)
+              .length === 1
+          ) {
+            const idx = draftState.hands.findIndex(
+              (pile) => pile.length === draftState.round
+            );
+            if (idx !== -1) {
+              const newCard = draftState.deck?.pop()!;
+              draftState.hands[idx].push(draftState.activeCard);
+              draftState.activeCard = newCard;
+              if (draftState.hands.every((h) => h.length === state.round + 1)) {
+                draftState.round++;
+              }
+              if (draftState.hands.every((h) => h.length === 5)) {
+                draftState.score = draftState.hands.reduce((sum, hand) => {
+                  return sum + rankPokerHand(hand);
+                }, 0);
+              }
+            }
+          }
+        }
+        return draftState;
+      }
+      case "SET_AUTOPLAY": {
+        draftState.autoPlay = !!action.payload;
+        return draftState;
       }
     }
   });
@@ -111,6 +146,7 @@ const getInitialState = (dateStr: string): GameState => {
     score: null,
     round: 1,
     isFreePlay: false,
+    autoPlay: false,
   };
 };
 
@@ -153,6 +189,12 @@ function Home() {
       localStorage.setItem(dateStr, JSON.stringify(state));
     }
   }, [state]);
+
+  const { autoPlay } = useSettingsContext();
+
+  useEffect(() => {
+    dispatch({ payload: autoPlay, type: "SET_AUTOPLAY" });
+  }, [autoPlay]);
 
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
@@ -211,6 +253,13 @@ function Home() {
     };
   }, []);
 
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const onOpenSettingsModal = useCallback(() => setSettingsModalOpen(true), []);
+  const onCloseSettingsModal = useCallback(
+    () => setSettingsModalOpen(false),
+    []
+  );
+
   const [rulesModalOpen, setRulesModalOpen] = useState(false);
   const onOpenRulesModal = useCallback(() => setRulesModalOpen(true), []);
   const onCloseRulesModal = useCallback(() => setRulesModalOpen(false), []);
@@ -244,12 +293,39 @@ function Home() {
               Poker Squares
             </button>
 
-            <button
-              className="border border-gray-300 p-1 shadow-lg"
-              onClick={onOpenRulesModal}
-            >
-              Rules
-            </button>
+            <div className="flex gap-1">
+              <button
+                className="border border-gray-300 p-1 shadow-lg"
+                onClick={onOpenRulesModal}
+              >
+                Rules
+              </button>
+              <button
+                className="border border-gray-300 p-1 shadow-lg"
+                onClick={onOpenSettingsModal}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  viewBox="0 0 32 32"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    d="M13.9 3.38A.5.5 0 0 1 14.4 3h3.22a.5.5 0 0 1 .48.38l.7 2.76a.52.52 0 0 0 .33.36c.39.12.76.27 1.12.44a.52.52 0 0 0 .45 0l2.77-1.39a.5.5 0 0 1 .57.1l2.32 2.32a.5.5 0 0 1 .1.57l-1.39 2.77a.52.52 0 0 0 0 .45c.13.27.24.55.35.83.05.15.17.27.31.32l2.94.98a.5.5 0 0 1 .34.47v3.28a.5.5 0 0 1-.34.47l-2.94.98a.52.52 0 0 0-.32.32 9.94 9.94 0 0 1-.34.83.52.52 0 0 0 0 .45l1.39 2.77a.5.5 0 0 1-.1.57l-2.32 2.32a.5.5 0 0 1-.57.1l-2.77-1.39a.52.52 0 0 0-.45 0 10 10 0 0 1-.83.35.52.52 0 0 0-.32.31l-.98 2.94a.5.5 0 0 1-.47.34h-3.28a.5.5 0 0 1-.47-.34l-.98-2.94a.52.52 0 0 0-.32-.32 9.95 9.95 0 0 1-1.1-.47.52.52 0 0 0-.5.01l-2.43 1.47a.5.5 0 0 1-.61-.08l-2.28-2.28a.5.5 0 0 1-.08-.6L7.06 21a.52.52 0 0 0 .01-.5 9.94 9.94 0 0 1-.57-1.39.52.52 0 0 0-.36-.34l-2.76-.69a.5.5 0 0 1-.38-.48v-3.22a.5.5 0 0 1 .38-.49l2.76-.68a.52.52 0 0 0 .36-.35c.16-.47.35-.93.57-1.38a.52.52 0 0 0-.01-.5L5.59 8.56a.5.5 0 0 1 .08-.61l2.28-2.28a.5.5 0 0 1 .6-.08L11 7.06c.16.09.34.1.5.01a9.94 9.94 0 0 1 1.38-.57.52.52 0 0 0 .35-.36l.69-2.76z"
+                  />
+                  <circle
+                    cx="16"
+                    cy="16"
+                    r="5"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </header>
         <main className="flex justify-center flex-col items-center">
@@ -348,6 +424,10 @@ function Home() {
       </div>
       <Modal onClose={onCloseScoresModal} open={scoresModalOpen}>
         <Scores dateStr={dateStr} />
+      </Modal>
+
+      <Modal onClose={onCloseSettingsModal} open={settingsModalOpen}>
+        <Settings />
       </Modal>
 
       <Modal

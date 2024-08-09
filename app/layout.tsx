@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import "./globals.css";
 import balatroFont from "next/font/local";
 import Head from "next/head";
+import { SettingsContextProvider } from "@/context/SettingsContext";
 
 const myFont = balatroFont({
   src: "../public/balatro.ttf",
@@ -182,7 +183,9 @@ export default function RootLayout({
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0b2b83" />
         <meta name="msapplication-TileColor" content="#0b2b83" />
       </Head>
-      <body className={myFont.className}>{children}</body>
+      <body className={myFont.className}>
+        <SettingsContextProvider>{children}</SettingsContextProvider>
+      </body>
     </html>
   );
 }

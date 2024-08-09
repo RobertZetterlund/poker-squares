@@ -1,3 +1,4 @@
+import { useSettingsContext } from "@/context/SettingsContext";
 import { Card } from "@/utils/scorePokerHand";
 import { memo } from "react";
 
@@ -15,10 +16,16 @@ export const PlayingCard = memo<{
   card: Card;
   onClick?: () => void;
   inline?: boolean;
+  contrast?: boolean;
 }>(
   function PlayingCard({ card, onClick, inline = false }) {
     const yOffset = suitMap[card.Suit] * jumpY;
     const xOffset = (card.Value - 2) * jumpX;
+
+    const { contrast } = useSettingsContext();
+    const imgSrc = contrast
+      ? "cards_sprite_contrast.png"
+      : "cards_sprite_regular.png";
 
     return (
       <div
@@ -28,7 +35,7 @@ export const PlayingCard = memo<{
         <div
           className="card"
           style={{
-            backgroundImage: `url(cards_sprite.png)`,
+            backgroundImage: `url(${imgSrc})`,
             backgroundPositionX: -xOffset + "px",
             backgroundPositionY: -yOffset + "px",
           }}
