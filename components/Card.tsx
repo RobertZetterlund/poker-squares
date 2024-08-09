@@ -23,9 +23,7 @@ export const PlayingCard = memo<{
     const xOffset = (card.Value - 2) * jumpX;
 
     const { contrast } = useSettingsContext();
-    const imgSrc = contrast
-      ? "cards_sprite_contrast.png"
-      : "cards_sprite_regular.png";
+    const imgSrc = contrast ? "cards_sprite_contrast.png" : "cards_sprite.png";
 
     return (
       <div
