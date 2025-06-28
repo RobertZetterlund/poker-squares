@@ -2,7 +2,7 @@
 
 <img src='./public/opengraph-image.png'>
 
-I played Poker Squares when I grew up and was reminded of it when visiting my parents this summer. Turns out all of the websites I could find to play it online was full of ads. So this repository hosts a simple poker squares playing game, with the added functionality to play the "daily deck" to compare with others, and free-play mode to play a randomly shuffled deck. Using [Vercel KV](https://vercel.com/docs/storage/vercel-kv) I was able to use Redis to persist scores, so I persist global games, as well as the daily deck game, viewable on the leaderboard.
+I played Poker Squares when I grew up and was reminded of it when visiting my parents this summer. Turns out all of the websites I could find to play it online was full of ads, or were using the american scoring method. So this repository hosts a simple poker squares playing game, with the added functionality to play the "daily deck" to compare with others, and free-play mode to play a randomly shuffled deck. Using [Vercel KV](https://vercel.com/docs/storage/vercel-kv) I was able to use Redis to persist scores, so I persist global games, as well as the daily deck game, viewable on the leaderboard.
 
 <img src='./public/leaderboard.png'>
 
